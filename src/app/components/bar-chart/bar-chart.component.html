@@ -1,0 +1,33 @@
+<div class="container">
+  <div id="chart__deco">
+    <h3 id="chart__header"><strong>{{selectedObject?.desc}}</strong></h3>
+    <div id="chart-area"></div>
+  </div>
+  <div>
+    <mat-card class="example-card">
+      <mat-card-header>
+        <mat-card-title>Control Panel</mat-card-title>
+      </mat-card-header>
+      <mat-card-actions>
+        <div class="button__group">
+          <!-- <mat-button-toggle-group [(ngModel)]="selectedVisualization" id="selectedOption" aria-label="Font Style">
+            <mat-button-toggle (change)="selectedValue($event.value)" value="barChart">Bar-Chart</mat-button-toggle>
+            <mat-button-toggle (change)="selectedValue($event.value)" value="scatterPlots">Scatter-Plots</mat-button-toggle>
+          </mat-button-toggle-group> -->
+          <mat-form-field appearance="fill">
+            <mat-label>Select an option</mat-label>
+            <mat-select [(ngModel)]="selectedVisualization" (selectionChange)="selectedValue($event)">
+              <mat-option *ngFor="let selectedChart of charts" [value]="selectedChart.value">
+                {{selectedChart.desc}}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Select Chart</mat-hint>
+          </mat-form-field>
+          <mat-slide-toggle *ngIf="selectedVisualization !== 'lineChart'" (click)="handleTransition()" id="playPause">{{buttonText}}</mat-slide-toggle>
+          <mat-slide-toggle *ngIf="buttonText !== 'Pause'" (click)="handleYAxis()" id="Yaxisdata">{{flag ? 'Revenue' : 'Profit'}}</mat-slide-toggle>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+</div>

@@ -1,0 +1,64 @@
+#chart-area {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+#selectedOption {
+  margin: 16px 16px 16px 0;
+}
+.button__group {
+  padding-left: 16px;
+  align-items: center;
+}
+#playPause, #Yaxisdata {
+  margin: 16px 16px 16px 0;
+}
+
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,1),
+              0 1px 1px 0 rgba(0,0,0,1),
+              0 1px 3px 0 rgba(0,0,0,1);
+}
+#chart__header{
+  margin-left: 70%;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+#chart__deco {
+  width: 50%;
+}
+@media (min-width:769px) and (max-width: 1000px){
+  .example-card {
+    float: right;
+    width: 50%;
+    margin: 16px;
+}
+}
+@media (min-width:1000px) and (max-width: 1500px){
+  .example-card {
+    float: right;
+    width: 35%;
+    margin: 16px;
+}
+}
+@media (min-width:1501px){
+  .example-card {
+    float: right;
+    width: 30%;
+    margin: 16px;
+}
+}
+@media (max-width:768px){
+  .example-card {
+    float: right;
+    margin: 16px;
+}
+}
+@media (min-width:770px) and (max-width: 990px){
+  .mat-form-field {
+    width: 90%;
+}
+}
+

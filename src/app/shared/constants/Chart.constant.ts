@@ -1,0 +1,28 @@
+export const CHART_OBJ = {
+  BAR_CHART_VALUE: "barChart",
+  BAR_CHART_DESCRIPTION: "Bar-Chart",
+  SCATTER_PLOT_VALUE: "scatterPlots",
+  SCATTER_PLOT_DESCRIPTION: "Scatter-Plot",
+  LINE_CHART_VALUE: "lineChart",
+  LINE_CHART_DESCRIPTION: "Line-Chart",
+  BAR_CHART_FUNCTION: "updateChartWithRect",
+  LINE_CHART_FUNCTION: "updateChartWithLineGraph",
+  SCATTER_PLOT_FUNCTION: "updateChartWithScatterPlots",
+  PIE_CHART_VALUE: "pieChart",
+  PIE_CHART_DESCRIPTION: "Pie-Chart",
+  PIE_CHART_FUNCTION: "updateChartWithPieChart",
+  MARGINS : {
+    top: 20,
+    right: 10,
+    left: 100,
+    bottom: 130,
+  },
+  INITIAL_WIDTH: 600,
+  INITIAL_HEIGHT: 400,
+  REVENUE_SMALL: "revenue",
+  PROFIT_SMALL: "profit",
+  REVENUE: "Revenue",
+  PROFIT: "Profit",
+  PLAY: "Play",
+  PAUSE: "PAUSE"
+};
