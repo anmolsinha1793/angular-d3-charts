@@ -24,5 +24,5 @@ export const CHART_OBJ = {
   REVENUE: "Revenue",
   PROFIT: "Profit",
   PLAY: "Play",
-  PAUSE: "PAUSE"
+  PAUSE: "Pause"
 };

@@ -308,7 +308,11 @@ export class BarChartComponent implements OnInit {
     let label = this.flag ? CHART_OBJ.REVENUE : CHART_OBJ.PROFIT;
     this.yLabel.text(label);
   }
-  handleYAxis() {
+   /**
+   Method to handle the updation of Y axis based on chosen value
+   @returns void
+  */
+  handleYAxis(): void {
     this.flag = !this.flag;
     this[this.assignmentObj[this.selectedVisualization]](this.data);
   }
