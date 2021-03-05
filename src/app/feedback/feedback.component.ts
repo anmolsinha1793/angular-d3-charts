@@ -13,13 +13,6 @@ export class FeedbackComponent implements OnInit {
   constructor(private formBuilder: FormBuilder){
   }
 
-  // customerFeedback:Feedback = {
-  //   name: '',
-  //   gender: '',
-  //   rating: '',
-  // comment: '',
-  // };
-
 ngOnInit(): void {
   this.createForm();
 }

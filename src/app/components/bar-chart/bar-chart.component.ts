@@ -467,6 +467,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
     this.group
       .append('rect')
       .attr('class', 'overlay')
+      .attr('id', 'tooltip__linechart')
       .attr('width', CHART_WIDTH + 110)
       .attr('height', CHART_HEIGHT + 110)
       .on('mouseover', () => focus.style('display', null))
