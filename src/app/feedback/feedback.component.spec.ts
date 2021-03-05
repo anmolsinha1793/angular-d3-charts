@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ControlContainer, FormBuilder, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FeedbackComponent } from './feedback.component';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ValidateName } from '../validators/name.validator';
 
 describe('FeedbackComponent', () => {
   let component: FeedbackComponent;
@@ -42,6 +43,8 @@ describe('FeedbackComponent', () => {
     formDirective.form = fb.group({
       test: fb.control(null)
     });
+    //* test a custom validator
+    expect(ValidateName(new FormControl('bob'))).toEqual({ validName: true });
     expect(component.saveFeedback).toBeTruthy();
     expect(component.saveFeedback).toBeDefined();
     spyOn(component, "saveFeedback").and.callThrough();
