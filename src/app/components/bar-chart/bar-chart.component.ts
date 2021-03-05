@@ -154,9 +154,10 @@ export class BarChartComponent implements OnInit, OnDestroy {
    @returns void
   */
   createChartLayout(): void {
-    // remove any existing svg element before re-rendering
+    //* remove any existing svg element before re-rendering
     d3.selectAll('svg').remove();
 
+    //* contructing the basic container
     this.chartContainer = d3
       .select('#chart-area')
       .append('svg')
@@ -211,7 +212,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
         .attr('transform', `translate(0, ${CHART_HEIGHT})`);
 
       this.yAxisGroup = this.group.append('g').attr('class', 'y axis');
-      // X label
+      //* X label
       this.group
         .append('text')
         .attr('class', 'x axis-label')
@@ -221,7 +222,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
         .attr('text-anchor', 'middle')
         .text('Month');
 
-      // Y label
+      //* Y label
       this.yLabel = this.group
         .append('text')
         .attr('class', 'y axis-label')
@@ -291,7 +292,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('height', 0)
       .remove();
 
-    // all the attr methods before the merge are applied to the enter selection, whereas all the attr methods after the merge methods are applied to both enter and update selection
+    //* all the attr methods before the merge are applied to the enter selection, whereas all the attr methods after the merge methods are applied to both enter and update selection
     rects
       .enter()
       .append('rect')
@@ -360,7 +361,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('cy', yScale(0))
       .remove();
 
-    // all the attr methods before the merge are applied to the enter selection, whereas all the attr methods after the merge methods are applied to both enter and update selection
+    //* all the attr methods before the merge are applied to the enter selection, whereas all the attr methods after the merge methods are applied to both enter and update selection
     rects
       .enter()
       .append('circle')
@@ -385,10 +386,10 @@ export class BarChartComponent implements OnInit, OnDestroy {
   */
   updateChartWithLineGraph(data): void {
     const value = this.revenueFlag ? CHART_OBJ.REVENUE_SMALL : CHART_OBJ.PROFIT_SMALL;
-    // for tooltip
+    //* for tooltip
     const bisectDate = d3.bisector((d) => d.year).left;
     this.group.selectAll('path').remove();
-    // scales
+    //* scales
     const xScale = d3
       .scaleTime()
       .domain(d3.extent(data, (d) => d.year))
@@ -399,7 +400,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .domain([0, d3.max(data, (d) => d[value] + 3000)])
       .range([CHART_HEIGHT, 0]);
 
-    // axis generators
+    //* axis generators
     const xAxisCall = d3.axisBottom().tickSizeOuter(0);
     const yAxisCall = d3
       .axisLeft()
@@ -407,17 +408,17 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .tickSizeOuter(0)
       .tickFormat((d) => `${d}m`);
 
-    // line path generator
+    //* line path generator
     const line = d3
       .line()
       .x((d) => xScale(d.year))
       .y((d) => yScale(d[value]));
 
-    // generate axes once scales have been set
+    //* generate axes once scales have been set
     this.xAxisGroup.call(xAxisCall.scale(xScale));
     this.yAxisGroup.call(yAxisCall.scale(yScale));
 
-    // add line to chart
+    //* add line to chart
     this.group
       .append('path')
       .attr('class', 'line')
@@ -513,17 +514,17 @@ export class BarChartComponent implements OnInit, OnDestroy {
   updateChartWithPieChart(data): void {
     const value = this.revenueFlag ? CHART_OBJ.REVENUE_SMALL : CHART_OBJ.PROFIT_SMALL;
     this.createColors(data);
-    // d3.selectAll('pieces').remove();
+    //* remove any existing legend
     d3.selectAll('.legend').remove();
     this.group.attr(
       'transform',
       `translate(${CHART_WIDTH / 2},${CHART_HEIGHT / 2})`
     );
     const radius = Math.min(CHART_WIDTH, CHART_HEIGHT) / 2 - 10;
-    // Compute the position of each group on the pie:
+    //* Compute the position of each group on the pie:
     const pie = d3.pie<any>().value((d: any) => Number(d[value]));
 
-    // Build the pie chart
+    //* Build the pie chart
     const piechart = this.group.selectAll('pieces').data(pie(data));
 
     piechart
@@ -543,7 +544,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .transition(this.getTransition())
       .style('stroke-width', '1px');
 
-    // Add labels
+    //* Add labels
     const labelLocation = d3
       .arc()
       .innerRadius(100)
@@ -561,7 +562,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .style('font-size', 13);
 
     this.dataText.text(`Data Displayed: ${value} in $`);
-    // function call to add legend to chart
+    //* function call to add legend to chart
     this.addLegendForPieChart(pie, data);
   }
    /**
@@ -584,13 +585,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('class', 'legend');
 
     legendG
-      .append('rect') // make a matching color rect
+      .append('rect') //* make a matching color rect
       .attr('width', 10)
       .attr('height', 10)
       .attr('fill', (d, i) => this.colors(i));
 
     legendG
-      .append('text') // add the text
+      .append('text') //* add the text
       .text((d) => d.data.month)
       .style('font-size', 12)
       .style('font-weight', 'bold')
