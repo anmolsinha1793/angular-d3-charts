@@ -54,11 +54,12 @@
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
+    "typedoc": "^0.17.0-3",
     "typescript": "~3.7.5"
   },
   "husky": {
     "hooks": {
-        "pre-commit": "pretty-quick — staged && ng lint"
+      "pre-commit": "pretty-quick — staged && ng lint"
     }
-}
+  }
 }
