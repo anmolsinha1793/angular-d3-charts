@@ -14,7 +14,7 @@
             <mat-button-toggle (change)="selectedValue($event.value)" value="barChart">Bar-Chart</mat-button-toggle>
             <mat-button-toggle (change)="selectedValue($event.value)" value="scatterPlots">Scatter-Plots</mat-button-toggle>
           </mat-button-toggle-group> -->
-          <mat-form-field appearance="fill">
+          <mat-form-field appearance="outline">
             <mat-label>Select an option</mat-label>
             <mat-select [(ngModel)]="selectedVisualization" (selectionChange)="selectedValue($event)">
               <mat-option *ngFor="let selectedChart of charts" [value]="selectedChart.value">

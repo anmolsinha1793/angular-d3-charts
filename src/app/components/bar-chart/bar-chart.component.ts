@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import { Chart } from "../../models/chart";
@@ -13,28 +13,28 @@ const CHART_HEIGHT =
   templateUrl: "./bar-chart.component.html",
   styleUrls: ["./bar-chart.component.scss"],
 })
-export class BarChartComponent implements OnInit {
+export class BarChartComponent implements OnInit, OnDestroy {
   /**
    Overall chart container
   */
-  chartContainer: any;
+  chartContainer: d3.Selection<SVGElement>;
   /**
    Overall chart group
   */
-  group: any;
+  group: d3.Selection<SVGGElement>;
   flag = true;
   /**
    Y label for storing Y axis label
   */
-  yLabel: any;
+  yLabel: d3.Selection<SVGGElement>;
   /**
    for storing X axis group
   */
-  xAxisGroup: any;
+  xAxisGroup: d3.Selection<SVGGElement>;
   /**
    for storing Y axis group
   */
-  yAxisGroup: any;
+  yAxisGroup: d3.Selection<SVGGElement>;
   /**
    to store the selected chart
   */
@@ -70,7 +70,7 @@ export class BarChartComponent implements OnInit {
   /**
    for storing text for pie chart
   */
-  dataText: any;
+  dataText: d3.Selection<SVGGElement>;
   /**
    for storing function names based on chart
   */
@@ -82,7 +82,7 @@ export class BarChartComponent implements OnInit {
   };
   constructor() {}
   /**
-   Life-cycle hook for angular
+   Life-cycle hook for angular, executes on initialization of component
    @returns void
   */
   ngOnInit(): void {
@@ -151,6 +151,7 @@ export class BarChartComponent implements OnInit {
    @returns void
   */
   createChartLayout(): void {
+    // remove any existing svg element before re-rendering
     d3.selectAll("svg").remove();
 
     this.chartContainer = d3
@@ -611,5 +612,12 @@ export class BarChartComponent implements OnInit {
         "#666666",
       ])
       .domain(data.map((d) => d.month.toString()));
+  }
+  /**
+   Life-cycle hook for angular, executes when component gets removed from the DOM
+   @returns void
+  */
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
   }
 }
