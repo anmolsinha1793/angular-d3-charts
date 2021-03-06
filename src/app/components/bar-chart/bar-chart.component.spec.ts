@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BarChartComponent } from './bar-chart.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import * as d3  from 'd3';
+import { CHART_OBJ } from 'src/app/shared/constants/Chart.constant';
 
 describe('BarChartComponent', () => {
   let component: BarChartComponent;
@@ -35,14 +36,19 @@ describe('BarChartComponent', () => {
     let obj = {
       value: 'barChart'
     }
+    let selctedObjVal = {
+      desc: CHART_OBJ.BAR_CHART_DESCRIPTION,
+      value: CHART_OBJ.BAR_CHART_VALUE,
+    }
     expect(component.selectedValue).toBeTruthy();
     expect(component.selectedValue).toBeDefined();
     spyOn(component, "selectedValue").and.callThrough();
     component.selectedValue(obj);
     expect(component.selectedValue).toHaveBeenCalled();
+    expect(component.selectedObject).toEqual(selctedObjVal);
   });
   it("should check handleTransition function for Play button text", (done) => {
-    component.buttonText = 'Play';
+    component.buttonText = CHART_OBJ.PLAY;
     component.revenueFlag = true;
     expect(component.handleTransition).toBeTruthy();
     expect(component.handleTransition).toBeDefined();
@@ -53,9 +59,10 @@ describe('BarChartComponent', () => {
       expect(component.revenueFlag).toEqual(false);
       done();
     }, 1005);
+    expect(component.buttonText).toEqual(CHART_OBJ.PAUSE);
   });
   it("should check handleTransition function for Play button text and false revenue flag", (done) => {
-    component.buttonText = 'Play';
+    component.buttonText = CHART_OBJ.PLAY;
     component.revenueFlag = false;
     expect(component.handleTransition).toBeTruthy();
     expect(component.handleTransition).toBeDefined();
@@ -66,31 +73,38 @@ describe('BarChartComponent', () => {
       expect(component.revenueFlag).toEqual(true);
       done();
     }, 1005);
+    expect(component.buttonText).toEqual(CHART_OBJ.PAUSE);
   });
   it("should check handleTransition function for Pause button text", () => {
-    component.buttonText = 'Pause';
+    component.buttonText = CHART_OBJ.PAUSE;
     expect(component.handleTransition).toBeTruthy();
     expect(component.handleTransition).toBeDefined();
     spyOn(component, "handleTransition").and.callThrough();
     component.handleTransition();
     expect(component.handleTransition).toHaveBeenCalled();
+    expect(component.buttonText).toEqual(CHART_OBJ.PLAY);
   });
   it("should check handleTransition function for Pause button text for interval value", () => {
-    component.buttonText = 'Pause';
+    component.buttonText = CHART_OBJ.PAUSE;
     component.interval = setInterval(()=>{},0);
     expect(component.handleTransition).toBeTruthy();
     expect(component.handleTransition).toBeDefined();
     spyOn(component, "handleTransition").and.callThrough();
     component.handleTransition();
     expect(component.handleTransition).toHaveBeenCalled();
+    expect(component.buttonText).toEqual(CHART_OBJ.PLAY);
   });
   it("should check createChartLayout function for selectedvisualization as 'pieChart'", () => {
-    component.selectedVisualization = 'pieChart';
+    component.selectedVisualization = CHART_OBJ.PIE_CHART_VALUE;
     expect(component.createChartLayout).toBeTruthy();
     expect(component.createChartLayout).toBeDefined();
     spyOn(component, "createChartLayout").and.callThrough();
     component.createChartLayout();
     expect(component.createChartLayout).toHaveBeenCalled();
+    expect(component.chartContainer).toBeDefined();
+    expect(component.group).toBeDefined();
+    expect(component.xAxisGroup).toBeDefined();
+    expect(component.yAxisGroup).toBeDefined();
   });
   it("should check handleYAxis function", () => {
     component.selectedVisualization = 'lineChart';
@@ -100,6 +114,7 @@ describe('BarChartComponent', () => {
     component.createChartLayout();
     component.handleYAxis();
     expect(component.handleYAxis).toHaveBeenCalled();
+    expect(component.revenueFlag).toBeFalse();
   });
   it("should check handleYAxis function for selectedvisualization as 'scatterplot'", () => {
     component.selectedVisualization = 'scatterPlots';
@@ -108,6 +123,7 @@ describe('BarChartComponent', () => {
     spyOn(component, "handleYAxis").and.callThrough();
     component.handleYAxis();
     expect(component.handleYAxis).toHaveBeenCalled();
+    expect(component.revenueFlag).toBeFalsy();
   });
   it("should check updateChartWithScatterPlots function for revenue flag true", () => {
     component.revenueFlag = true;
@@ -116,6 +132,8 @@ describe('BarChartComponent', () => {
     spyOn(component, "updateChartWithScatterPlots").and.callThrough();
     component.updateChartWithScatterPlots(component.data);
     expect(component.updateChartWithScatterPlots).toHaveBeenCalled();
+    expect(component.yLabel).toBeDefined();
+    expect(component.revenueFlag).toBeTruthy();
   });
   it("should check updateChartWithLineGraph function for revenue flag true", () => {
     component.revenueFlag = true;
@@ -129,6 +147,7 @@ describe('BarChartComponent', () => {
     resultSvg.dispatchEvent(new MouseEvent('mouseout'));
     resultSvg.dispatchEvent(new MouseEvent('mousemove'));
     expect(resultSvg).toBeDefined();
+    expect(component.revenueFlag).toBeTruthy();
   });
   it("should check updateChartWithLineGraph function for revenue flag false", () => {
     component.revenueFlag = false;
@@ -143,6 +162,7 @@ describe('BarChartComponent', () => {
     resultSvg.dispatchEvent(new MouseEvent('mouseout'));
     resultSvg.dispatchEvent(new MouseEvent('mousemove'));
     expect(resultSvg).toBeDefined();
+    expect(component.revenueFlag).toBeFalsy();
   });
   it("should check updateChartWithPieChart function for revenue flag false", () => {
     component.revenueFlag = false;
@@ -156,6 +176,7 @@ describe('BarChartComponent', () => {
     spyOn(component, "updateChartWithPieChart").and.callThrough();
     component.updateChartWithPieChart(component.data);
     expect(component.updateChartWithPieChart).toHaveBeenCalled();
+    expect(component.revenueFlag).toBeFalsy();
   });
   it("should check createChartLayout function for revenue flag false", () => {
     component.selectedVisualization = 'lineChart';
@@ -164,6 +185,7 @@ describe('BarChartComponent', () => {
     spyOn(component, "createChartLayout").and.callThrough();
     component.createChartLayout();
     expect(component.createChartLayout).toHaveBeenCalled();
+    expect(component.revenueFlag).toBeTruthy();
   });
 });
 
