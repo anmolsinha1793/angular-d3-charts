@@ -186,6 +186,9 @@ describe('BarChartComponent', () => {
     component.createChartLayout();
     expect(component.createChartLayout).toHaveBeenCalled();
     expect(component.revenueFlag).toBeTruthy();
+    const resultSvg = document.getElementById('chart-area');
+    resultSvg.dispatchEvent(new CustomEvent('zoom'));
+    expect(resultSvg).toBeDefined();
     const tip = document.getElementsByClassName('d3-tip');
     expect(tip).toBeDefined();
   });

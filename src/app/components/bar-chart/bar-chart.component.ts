@@ -172,7 +172,15 @@ export class BarChartComponent implements OnInit, OnDestroy {
           : CHART_WIDTH) +
           CHART_OBJ.MARGINS.left +
           CHART_OBJ.MARGINS.right
-      );
+      )
+
+  let zoom = d3.zoom()
+  .translateExtent([[-500, -300], [1500, 1000]])
+  .scaleExtent([1, 2])
+   .on('zoom', (e) => {
+    this.chartContainer.attr('transform', e.transform)
+   });
+   this.chartContainer.call(zoom);
 
     this.group = this.chartContainer
       .append('g')
