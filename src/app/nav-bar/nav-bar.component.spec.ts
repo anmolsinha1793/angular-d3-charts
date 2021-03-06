@@ -2,6 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { NavBarComponent } from './nav-bar.component';
 
@@ -11,7 +12,7 @@ describe('NavBarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, MatMenuModule],
+      imports: [ReactiveFormsModule, MatMenuModule, RouterTestingModule],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
       declarations: [ NavBarComponent ]
     })

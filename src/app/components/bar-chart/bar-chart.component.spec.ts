@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BarChartComponent } from './bar-chart.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import * as d3  from 'd3';
+import d3Tip from 'd3-tip';
 import { CHART_OBJ } from 'src/app/shared/constants/Chart.constant';
 
 describe('BarChartComponent', () => {
@@ -111,7 +112,6 @@ describe('BarChartComponent', () => {
     expect(component.handleYAxis).toBeTruthy();
     expect(component.handleYAxis).toBeDefined();
     spyOn(component, "handleYAxis").and.callThrough();
-    component.createChartLayout();
     component.handleYAxis();
     expect(component.handleYAxis).toHaveBeenCalled();
     expect(component.revenueFlag).toBeFalse();
@@ -186,6 +186,8 @@ describe('BarChartComponent', () => {
     component.createChartLayout();
     expect(component.createChartLayout).toHaveBeenCalled();
     expect(component.revenueFlag).toBeTruthy();
+    const tip = document.getElementsByClassName('d3-tip');
+    expect(tip).toBeDefined();
   });
 });
 
