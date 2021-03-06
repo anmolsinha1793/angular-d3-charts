@@ -416,7 +416,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     //* generate axes once scales have been set
     this.xAxisGroup.call(xAxisCall.scale(xScale));
-    this.yAxisGroup.call(yAxisCall.scale(yScale));
+    this.yAxisGroup.transition(this.getTransition()).call(yAxisCall.scale(yScale));
 
     //* add line to chart
     this.group
