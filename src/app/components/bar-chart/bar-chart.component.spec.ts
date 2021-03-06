@@ -107,7 +107,7 @@ describe('BarChartComponent', () => {
     expect(component.yAxisGroup).toBeDefined();
   });
   it("should check handleYAxis function", () => {
-    component.selectedVisualization = 'lineChart';
+    component.selectedVisualization = CHART_OBJ.LINE_CHART_VALUE;
     expect(component.handleYAxis).toBeTruthy();
     expect(component.handleYAxis).toBeDefined();
     spyOn(component, "handleYAxis").and.callThrough();
@@ -117,7 +117,7 @@ describe('BarChartComponent', () => {
     expect(component.revenueFlag).toBeFalse();
   });
   it("should check handleYAxis function for selectedvisualization as 'scatterplot'", () => {
-    component.selectedVisualization = 'scatterPlots';
+    component.selectedVisualization = CHART_OBJ.SCATTER_PLOT_VALUE;
     expect(component.handleYAxis).toBeTruthy();
     expect(component.handleYAxis).toBeDefined();
     spyOn(component, "handleYAxis").and.callThrough();
@@ -179,7 +179,7 @@ describe('BarChartComponent', () => {
     expect(component.revenueFlag).toBeFalsy();
   });
   it("should check createChartLayout function for revenue flag false", () => {
-    component.selectedVisualization = 'lineChart';
+    component.selectedVisualization = CHART_OBJ.LINE_CHART_VALUE;
     expect(component.createChartLayout).toBeTruthy();
     expect(component.createChartLayout).toBeDefined();
     spyOn(component, "createChartLayout").and.callThrough();
