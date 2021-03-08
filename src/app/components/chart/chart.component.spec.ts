@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 
-import { BarChartComponent } from './bar-chart.component';
+import { BarChartComponent } from './chart.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CHART_OBJ } from 'src/app/shared/constants/Chart.constant';
 import * as d3 from 'd3';

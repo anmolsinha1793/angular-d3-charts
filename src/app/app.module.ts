@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { FeedbackComponent } from './feedback/feedback.component';
-import { BarChartComponent } from './components/bar-chart/bar-chart.component';
+import { BarChartComponent } from './components/chart/chart.component';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 

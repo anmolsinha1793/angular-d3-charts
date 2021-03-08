@@ -5,14 +5,11 @@ import { Chart } from '../../models/chart';
 import { CHART_OBJ } from '../../shared/constants/Chart.constant';
 import { fromEvent, Observable, Subscription } from "rxjs";
 
-// const this.CHART_WIDTH =
-//   CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
-// const CHART_HEIGHT =
-//   CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
+
 @Component({
-  selector: 'app-bar-chart',
-  templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.scss'],
+  selector: 'app-chart',
+  templateUrl: './chart.component.html',
+  styleUrls: ['./chart.component.scss'],
 })
 export class BarChartComponent implements OnInit, OnDestroy {
   /**
@@ -223,7 +220,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
     this.tip = d3Tip()
       .attr('class', 'd3-tip')
       .html((e, d) => {
-        let text;
+        let text = '';
         if(this.selectedVisualization !== CHART_OBJ.GROUPED_BAR_CHART_VALUE){
           text = `<strong>Month:</strong> <span style='color:red'>${d.month}</span><br>`;
         text += `<strong>${
@@ -293,10 +290,10 @@ export class BarChartComponent implements OnInit, OnDestroy {
         d.revenue = Number(d.revenue);
         d.profit = +d.profit;
         d.year = parseTime(d.year);
-        d.Under_5_Years = Number(d.Under_5_Years);
-        d._5_to_25_Years = Number(d._5_to_25_Years);
-        d._25_to_45_Years = Number(d._25_to_45_Years);
-        d._45_Years_and_Over = Number(d._45_Years_and_Over);
+        d.Under_5_Years = Number(d.Under_5_Years)/100;
+        d._5_to_25_Years = Number(d._5_to_25_Years)/100;
+        d._25_to_45_Years = Number(d._25_to_45_Years)/100;
+        d._45_Years_and_Over = Number(d._45_Years_and_Over)/100;
       });
       this.data['groupKey'] = this.data['columns'][0];
       this.data['keys'] = this.data['columns'].slice(4);
@@ -453,7 +450,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .text(d => d.split("_").join(" "));
 
       //* change y axis label
-      this.yLabel.text('Population');
+      this.yLabel.text(CHART_OBJ.POPULATION_TEXT);
 
   }
    /**
@@ -569,6 +566,20 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('stroke', 'steelblue')
       .attr('stroke-width', '3px')
       .attr('d', line(data));
+
+    //* optionally add circular dots to the line-chart, comment if not needed
+    this.group.selectAll(".dot")
+      .data(data)
+    .enter().append("circle") // Uses the enter().append() method
+      .attr("class", "dot") // Assign a class for styling
+      .attr("cx", function(d, i) { return xScale(d.year) })
+      .attr("cy", function(d) { return yScale(d[value]) })
+      .attr("r", 5)
+        .on("mouseover", function(a, b, c) {
+          console.log(a)
+          this.attr('class', 'focus')
+      })
+        .on("mouseout", function() {  })
 
     /******************************** Tooltip Code ********************************/
 
