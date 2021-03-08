@@ -5,24 +5,32 @@ export const CHART_OBJ = {
   SCATTER_PLOT_DESCRIPTION: "Scatter-Plot",
   LINE_CHART_VALUE: "lineChart",
   LINE_CHART_DESCRIPTION: "Line-Chart",
-  BAR_CHART_FUNCTION: "updateChartWithRect",
+  BAR_CHART_FUNCTION: "updateChartWithBarChart",
   LINE_CHART_FUNCTION: "updateChartWithLineGraph",
   SCATTER_PLOT_FUNCTION: "updateChartWithScatterPlots",
   PIE_CHART_VALUE: "pieChart",
   PIE_CHART_DESCRIPTION: "Pie-Chart",
   PIE_CHART_FUNCTION: "updateChartWithPieChart",
+  GROUPED_BAR_CHART_VALUE: "groupedBarChart",
+  GROUPED_BAR_CHART_DESCRIPTION: "Grouped-Bar-Chart",
+  GROUPED_BAR_CHART_FUNCTION: "updateChartWithGroupedBarChart",
   MARGINS : {
     top: 20,
     right: 10,
     left: 100,
     bottom: 130,
   },
-  INITIAL_WIDTH: 600,
-  INITIAL_HEIGHT: 400,
+  INITIAL_WIDTH: 800, //600
+  INITIAL_HEIGHT: 600, //400
   REVENUE_SMALL: "revenue",
   PROFIT_SMALL: "profit",
   REVENUE: "Revenue",
   PROFIT: "Profit",
   PLAY: "Play",
-  PAUSE: "Pause"
+  PAUSE: "Pause",
+  TRANSLATE_EXTENT_MINUS_500: -500,
+  TRANSLATE_EXTENT_MINUS_300: -300,
+  TRANSLATE_EXTENT_1500: 1500,
+  TRANSLATE_EXTENT_1000: 1000,
+  LINE_CHART_EXTRA_WIDTH_150: 150
 };

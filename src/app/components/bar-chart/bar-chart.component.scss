@@ -20,39 +20,37 @@
               0 1px 3px 0 rgba(0,0,0,1);
 }
 #chart__header{
-  margin-left: 70%;
+  margin-left: 50%;
 }
 .container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  // grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: auto auto;
+  justify-content: start;
 }
-#chart__deco {
-  width: 50%;
-}
+// #chart__deco {
+//   width: 50%;
+// }
 @media (min-width:769px) and (max-width: 1000px){
   .example-card {
-    float: right;
     width: 50%;
     margin: 16px;
 }
 }
 @media (min-width:1000px) and (max-width: 1500px){
   .example-card {
-    float: right;
     width: 35%;
     margin: 16px;
 }
 }
 @media (min-width:1501px){
   .example-card {
-    float: right;
-    width: 30%;
+    width: 45%;
     margin: 16px;
 }
 }
 @media (max-width:768px){
   .example-card {
-    float: right;
     margin: 16px;
 }
 }
@@ -60,5 +58,9 @@
   .mat-form-field {
     width: 90%;
 }
+}
+
+.mat-form-field {
+ width: 90%;
 }
 

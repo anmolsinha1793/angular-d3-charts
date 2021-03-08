@@ -1,8 +1,4 @@
 <div class="container">
-  <div id="chart__deco">
-    <h3 id="chart__header"><strong>{{selectedObject?.desc}}</strong></h3>
-    <div id="chart-area"></div>
-  </div>
   <div>
     <mat-card class="example-card">
       <mat-card-header>
@@ -23,11 +19,18 @@
             </mat-select>
             <mat-hint>Select Chart</mat-hint>
           </mat-form-field>
-          <mat-slide-toggle *ngIf="selectedVisualization !== 'lineChart'" (click)="handleTransition()" id="playPause">{{buttonText}}</mat-slide-toggle>
+          <ng-container *ngIf="selectedVisualization !== 'groupedBarChart'">
+            <mat-slide-toggle *ngIf="selectedVisualization !== 'lineChart'" (click)="handleTransition()" id="playPause">{{buttonText}}</mat-slide-toggle>
           <mat-slide-toggle *ngIf="buttonText !== 'Pause'" (click)="handleYAxis()" id="Yaxisdata">{{revenueFlag ? 'Revenue' : 'Profit'}}</mat-slide-toggle>
+          </ng-container>
+
         </div>
       </mat-card-actions>
     </mat-card>
+  </div>
+  <div id="chart__deco">
+    <h3 id="chart__header"><strong>{{selectedObject?.desc}}</strong></h3>
+    <div id="chart-area"></div>
   </div>
 
 </div>

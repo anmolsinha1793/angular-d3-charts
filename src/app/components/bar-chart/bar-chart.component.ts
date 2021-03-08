@@ -3,11 +3,12 @@ import * as d3 from 'd3';
 import d3Tip from 'd3-tip';
 import { Chart } from '../../models/chart';
 import { CHART_OBJ } from '../../shared/constants/Chart.constant';
+import { fromEvent, Observable, Subscription } from "rxjs";
 
-const CHART_WIDTH =
-  CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
-const CHART_HEIGHT =
-  CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
+// const this.CHART_WIDTH =
+//   CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
+// const CHART_HEIGHT =
+//   CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
@@ -82,7 +83,14 @@ export class BarChartComponent implements OnInit, OnDestroy {
     scatterPlots: CHART_OBJ.SCATTER_PLOT_FUNCTION,
     pieChart: CHART_OBJ.PIE_CHART_FUNCTION,
     lineChart: CHART_OBJ.LINE_CHART_FUNCTION,
+    groupedBarChart: CHART_OBJ.GROUPED_BAR_CHART_FUNCTION
   };
+  CHART_WIDTH =
+  CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
+  CHART_HEIGHT =
+  CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
+  resizeObservable$: Observable<Event>;
+  resizeSubscription$: Subscription;
   constructor() {}
   /**
    Life-cycle hook for angular, executes on initialization of component
@@ -109,10 +117,32 @@ export class BarChartComponent implements OnInit, OnDestroy {
         desc: CHART_OBJ.PIE_CHART_DESCRIPTION,
         value: CHART_OBJ.PIE_CHART_VALUE,
       },
+      {
+        desc: CHART_OBJ.GROUPED_BAR_CHART_DESCRIPTION,
+        value: CHART_OBJ.GROUPED_BAR_CHART_VALUE,
+      },
     ];
     this.selectedObject = this.charts.find(
       (key: any) => key.value === this.selectedVisualization
     );
+    this.resizeObservable$ = fromEvent(window, 'resize')
+    this.resizeSubscription$ = this.resizeObservable$.subscribe( evt => {
+      this.onResize(evt);
+    })
+  }
+  /**
+   Method to resize the charts on screen size change
+   @returns void
+  */
+  onResize(event): void {
+    CHART_OBJ.INITIAL_WIDTH = 0.6 * event.target.innerWidth;
+    CHART_OBJ.INITIAL_HEIGHT = (event.target.innerHeight > event.target.innerWidth) && (event.target.innerHeight - event.target.innerWidth >= 350)? 0.7 * (event.target.innerHeight - event.target.innerWidth): 0.8 * event.target.innerHeight;
+    this.CHART_WIDTH =
+    CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
+    this.CHART_HEIGHT =
+    CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
+    this.createChartLayout();
+    this[this.assignmentObj[this.selectedVisualization]](this.data);
   }
   /**
    Method to return transition with a set duration
@@ -161,21 +191,22 @@ export class BarChartComponent implements OnInit, OnDestroy {
     this.chartContainer = d3
       .select('#chart-area')
       .append('svg')
+      .attr('id','chart__svg')
       .attr(
         'height',
-        CHART_HEIGHT + CHART_OBJ.MARGINS.top + CHART_OBJ.MARGINS.bottom
+        this.CHART_HEIGHT + CHART_OBJ.MARGINS.top + CHART_OBJ.MARGINS.bottom
       )
       .attr(
         'width',
         (this.selectedVisualization === CHART_OBJ.LINE_CHART_VALUE
-          ? CHART_WIDTH + 150
-          : CHART_WIDTH) +
+          ? this.CHART_WIDTH + CHART_OBJ.LINE_CHART_EXTRA_WIDTH_150
+          : this.CHART_WIDTH) +
           CHART_OBJ.MARGINS.left +
           CHART_OBJ.MARGINS.right
       )
 
   let zoom = d3.zoom()
-  .translateExtent([[-500, -300], [1500, 1000]])
+  .translateExtent([[CHART_OBJ.TRANSLATE_EXTENT_MINUS_500, CHART_OBJ.TRANSLATE_EXTENT_MINUS_300], [CHART_OBJ.TRANSLATE_EXTENT_1500, CHART_OBJ.TRANSLATE_EXTENT_1000]])
   .scaleExtent([1, 2])
    .on('zoom', (e) => {
     this.chartContainer.attr('transform', e.transform)
@@ -192,12 +223,20 @@ export class BarChartComponent implements OnInit, OnDestroy {
     this.tip = d3Tip()
       .attr('class', 'd3-tip')
       .html((e, d) => {
-        let text = `<strong>Month:</strong> <span style='color:red'>${d.month}</span><br>`;
+        let text;
+        if(this.selectedVisualization !== CHART_OBJ.GROUPED_BAR_CHART_VALUE){
+          text = `<strong>Month:</strong> <span style='color:red'>${d.month}</span><br>`;
         text += `<strong>${
           this.revenueFlag ? CHART_OBJ.REVENUE : CHART_OBJ.PROFIT
         }:</strong> <span style='color:orange'>${d3.format('$,.0f')(
           this.revenueFlag ? d[CHART_OBJ.REVENUE_SMALL] : d[CHART_OBJ.PROFIT_SMALL]
         )}</span><br>`;
+        } else {
+          text += `<strong>Population:</strong> <span style='color:orange'>${d3.format('.0f')(
+            d.value
+          )}</span><br>`;
+        }
+
         // text += `<strong>Profit:</strong> <span style='color:lightgreen'>${d3.format('$,.0f')(d.profit)}</span><br>`;
         return text;
       });
@@ -205,8 +244,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
     if (this.selectedVisualization === CHART_OBJ.PIE_CHART_VALUE) {
       this.dataText = this.group
         .append('text')
-        .attr('y', CHART_HEIGHT - 110)
-        .attr('x', CHART_WIDTH - 310)
+        .attr('y', this.CHART_HEIGHT - 210)
+        .attr('x', this.CHART_WIDTH - 410)
         .attr('font-size', '10px')
         .attr('opacity', '1')
         .attr('text-anchor', 'middle')
@@ -217,15 +256,15 @@ export class BarChartComponent implements OnInit, OnDestroy {
       this.xAxisGroup = this.group
         .append('g')
         .attr('class', 'x axis')
-        .attr('transform', `translate(0, ${CHART_HEIGHT})`);
+        .attr('transform', `translate(0, ${this.CHART_HEIGHT})`);
 
       this.yAxisGroup = this.group.append('g').attr('class', 'y axis');
       //* X label
       this.group
         .append('text')
         .attr('class', 'x axis-label')
-        .attr('x', CHART_WIDTH / 2)
-        .attr('y', CHART_HEIGHT + 50)
+        .attr('x', this.CHART_WIDTH / 2)
+        .attr('y', this.CHART_HEIGHT + 50)
         .attr('font-size', '20px')
         .attr('text-anchor', 'middle')
         .text('Month');
@@ -234,7 +273,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       this.yLabel = this.group
         .append('text')
         .attr('class', 'y axis-label')
-        .attr('x', -(CHART_HEIGHT / 2))
+        .attr('x', -(this.CHART_HEIGHT / 2))
         .attr('y', -60)
         .attr('font-size', '20px')
         .attr('text-anchor', 'middle')
@@ -254,7 +293,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
         d.revenue = Number(d.revenue);
         d.profit = +d.profit;
         d.year = parseTime(d.year);
+        d.Under_5_Years = Number(d.Under_5_Years);
+        d._5_to_25_Years = Number(d._5_to_25_Years);
+        d._25_to_45_Years = Number(d._25_to_45_Years);
+        d._45_Years_and_Over = Number(d._45_Years_and_Over);
       });
+      this.data['groupKey'] = this.data['columns'][0];
+      this.data['keys'] = this.data['columns'].slice(4);
 
       this[this.assignmentObj[this.selectedVisualization]](this.data);
     });
@@ -264,19 +309,19 @@ export class BarChartComponent implements OnInit, OnDestroy {
    @param {data} which is fetched from assets to render
    @returns void
   */
-  updateChartWithRect(data) {
+   updateChartWithBarChart(data) {
     const value = this.revenueFlag ? CHART_OBJ.REVENUE_SMALL : CHART_OBJ.PROFIT_SMALL;
 
     const xScale = d3
       .scaleBand()
       .domain(data.map((dataPoint) => dataPoint.month))
-      .rangeRound([0, CHART_WIDTH])
+      .rangeRound([0, this.CHART_WIDTH])
       .padding(0.1);
 
     const yScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d[value] + 3000)])
-      .range([CHART_HEIGHT, 0]);
+      .range([this.CHART_HEIGHT, 0]);
 
     const xAxisCall = d3.axisBottom(xScale).tickSizeOuter(0);
     this.xAxisGroup.transition(this.getTransition()).call(xAxisCall);
@@ -305,6 +350,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .enter()
       .append('rect')
       .attr('x', (data) => xScale(data.month))
+      .attr('id', 'barchart__tooltip')
       .attr('width', xScale.bandwidth())
       .attr('fill', 'steelblue')
       .attr('y', yScale(0))
@@ -316,10 +362,99 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('y', (data) => yScale(data[value]))
       .attr('x', (data) => xScale(data.month))
       .attr('width', xScale.bandwidth())
-      .attr('height', (data) => CHART_HEIGHT - yScale(data[value]));
+      .attr('height', (data) => this.CHART_HEIGHT - yScale(data[value]));
 
     const label = this.revenueFlag ? CHART_OBJ.REVENUE : CHART_OBJ.PROFIT;
     this.yLabel.text(label);
+  }
+  /**
+   Method to construct and display grouped bar chart
+   @param {data} which is fetched from assets to render
+   @returns void
+  */
+  updateChartWithGroupedBarChart(data): void {
+    let groupKey = data['groupKey'];
+    //* get keys for legend
+    let keys = data['columns'].slice(4);
+
+    //* prepare X and Y scales
+    var xScale0 = d3.scaleBand().range([0, this.CHART_WIDTH]).padding(0.2)
+    var xScale1 = d3.scaleBand()
+    var yScale = d3.scaleLinear().range([this.CHART_HEIGHT, 0])
+
+    //* prepare X and Y axis calls
+    var xAxis = d3.axisBottom(xScale0).tickSizeOuter(0);
+    var yAxis = d3.axisLeft(yScale).ticks(7).tickFormat((d) => `${d}m`).tickSizeOuter(0);
+
+    //* customize X and Y scale domains
+    xScale0.domain(data.map(d => d[groupKey]))
+    xScale1.domain(keys).range([0, xScale0.bandwidth()])
+    yScale.domain([0, d3.max(data, d => d3.max(keys, key => d[key]))]).nice()
+
+    //* X and Y axis calls
+    this.xAxisGroup.call(xAxis);
+    this.yAxisGroup.call(yAxis);
+
+    //* Prepare color for chart
+    let color = d3.scaleOrdinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+    const rects = this.group.selectAll("g")
+    .data(data);
+
+    //* append data to group and prepare bars for chart
+    this.group.append("g")
+    .selectAll("g")
+    .data(data, (d) => {
+      return d?.month;
+    })
+    .join("g")
+      .attr("transform", d => `translate(${xScale0(d[groupKey])},0)`)
+    .selectAll("rect")
+    .data(d => keys.map(key => ({key, value: d[key]})))
+    .join("rect")
+      .attr('id','grouped__bar__chart')
+      .attr("x", d => xScale1(d.key))
+      .attr("y", d => yScale(d.value))
+      .attr("width", xScale1.bandwidth())
+      .attr("height", d => yScale(0) - yScale(d.value))
+      .on('mouseover', this.tip.show)
+      .on('mouseout', this.tip.hide)
+      .attr("fill", d => color(d.key));
+
+
+    //* prepare legend
+    const legend = this.chartContainer
+      .attr("text-anchor", "end")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .selectAll('.legend')
+      .data(keys.slice())
+      .enter()
+      .append('g')
+      .attr(
+        'transform',
+        (d, i) => `translate(${(this.CHART_WIDTH + 90)}, ${(i * 20)})` // place each legend on the right and bump each one down 15 pixels
+      )
+      .attr('class', 'legend');
+
+      //* append rects for color in legend
+      legend.append("rect")
+      .attr("x", -19)
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", color);
+
+      //* Append text to legend
+      legend.append("text")
+      .attr("x", -24)
+      .attr("y", 9.5)
+      .attr("dy", "0.35em")
+      .text(d => d.split("_").join(" "));
+
+      //* change y axis label
+      this.yLabel.text('Population');
+
   }
    /**
    Method to handle the updation of Y axis based on chosen value
@@ -340,13 +475,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
     const xScale = d3
       .scaleBand()
       .domain(data.map((dataPoint) => dataPoint.month))
-      .rangeRound([0, CHART_WIDTH])
+      .rangeRound([0, this.CHART_WIDTH])
       .padding(0.1);
 
     const yScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d[value] + 3000)])
-      .range([CHART_HEIGHT, 0]);
+      .range([this.CHART_HEIGHT, 0]);
 
     const xAxisCall = d3.axisBottom(xScale).tickSizeOuter(0);
     this.xAxisGroup.transition(this.getTransition()).call(xAxisCall);
@@ -401,12 +536,12 @@ export class BarChartComponent implements OnInit, OnDestroy {
     const xScale = d3
       .scaleTime()
       .domain(d3.extent(data, (d) => d.year))
-      .rangeRound([0, CHART_WIDTH]);
+      .rangeRound([0, this.CHART_WIDTH]);
 
     const yScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d[value] + 3000)])
-      .range([CHART_HEIGHT, 0]);
+      .range([this.CHART_HEIGHT, 0]);
 
     //* axis generators
     const xAxisCall = d3.axisBottom().tickSizeOuter(0);
@@ -446,13 +581,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('line')
       .attr('class', 'x-hover-line hover-line')
       .attr('y1', 0)
-      .attr('y2', CHART_HEIGHT);
+      .attr('y2', this.CHART_HEIGHT);
 
     focus
       .append('line')
       .attr('class', 'y-hover-line hover-line')
       .attr('x1', 0)
-      .attr('x2', CHART_WIDTH);
+      .attr('x2', this.CHART_WIDTH);
 
     focus.append('circle').attr('r', 7.5);
 
@@ -476,8 +611,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('rect')
       .attr('class', 'overlay')
       .attr('id', 'tooltip__linechart')
-      .attr('width', CHART_WIDTH + 110)
-      .attr('height', CHART_HEIGHT + 110)
+      .attr('width', this.CHART_WIDTH + 110)
+      .attr('height', this.CHART_HEIGHT + 110)
       .on('mouseover', () => focus.style('display', null))
       .on('mouseout', () => focus.style('display', 'none'))
       .on('mousemove', (e) =>
@@ -512,7 +647,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .text(
         `${this.revenueFlag ? CHART_OBJ.REVENUE : CHART_OBJ.PROFIT}: ${d[value]}m`
       );
-    focus.select('.x-hover-line').attr('y2', CHART_HEIGHT - yScale(d[value]));
+    focus.select('.x-hover-line').attr('y2', this.CHART_HEIGHT - yScale(d[value]));
     focus.select('.y-hover-line').attr('x2', -xScale(d.year));
   }
   /**
@@ -527,9 +662,9 @@ export class BarChartComponent implements OnInit, OnDestroy {
     d3.selectAll('.legend').remove();
     this.group.attr(
       'transform',
-      `translate(${CHART_WIDTH / 2},${CHART_HEIGHT / 2})`
+      `translate(${this.CHART_WIDTH / 2},${this.CHART_HEIGHT / 2})`
     );
-    const radius = Math.min(CHART_WIDTH, CHART_HEIGHT) / 2 - 10;
+    const radius = Math.min(this.CHART_WIDTH, this.CHART_HEIGHT) / 2 - 10;
     //* Compute the position of each group on the pie:
     const pie = d3.pie<any>().value((d: any) => Number(d[value]));
 
@@ -589,7 +724,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('g')
       .attr(
         'transform',
-        (d, i) => 'translate(' + (CHART_WIDTH - 110) + ',' + (i * 15 + 20) + ')' // place each legend on the right and bump each one down 15 pixels
+        (d, i) => 'translate(' + (this.CHART_WIDTH - 110) + ',' + (i * 15 + 20) + ')' // place each legend on the right and bump each one down 15 pixels
       )
       .attr('class', 'legend');
 
@@ -631,6 +766,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
    @returns void
   */
   ngOnDestroy(): void {
+    this.resizeSubscription$.unsubscribe();
     clearInterval(this.interval);
   }
 }
