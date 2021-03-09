@@ -246,16 +246,14 @@ export class BarChartComponent implements OnInit, OnDestroy {
             d.value
           )}</span><br>`;
         }
-
-        // text += `<strong>Profit:</strong> <span style='color:lightgreen'>${d3.format('$,.0f')(d.profit)}</span><br>`;
         return text;
       });
     this.group.call(this.tip);
     if (this.selectedVisualization === CHART_OBJ.PIE_CHART_VALUE) {
       this.dataText = this.group
         .append('text')
-        .attr('y', this.CHART_HEIGHT - CHART_OBJ.NUMERIC_210)
-        .attr('x', this.CHART_WIDTH - CHART_OBJ.NUMERIC_410)
+        .attr('y', this.CHART_HEIGHT/2)
+        .attr('x', this.CHART_WIDTH/2)
         .attr('font-size', '10px')
         .attr('opacity', '1')
         .attr('text-anchor', 'middle')
@@ -741,30 +739,50 @@ export class BarChartComponent implements OnInit, OnDestroy {
   */
   addLegendForPieChart(pie, data): void {
     // add legend
-    const legendG = this.chartContainer
-      .selectAll('.legend') // note appending it to mySvg and not svg to make positioning easier
+    let legendRectSize = CHART_OBJ.NUMERIC_18;
+    let legendSpacing = CHART_OBJ.NUMERIC_4;
+    const horizontalScale = this.CHART_WIDTH * CHART_OBJ.NUMERIC_01;
+    const verticalScale = this.CHART_HEIGHT * CHART_OBJ.NUMERIC_045;
+    const domaninLength = d3
+    .scaleOrdinal([
+      '#7fc97f',
+      '#beaed4',
+      '#fdc086',
+      '#ffff99',
+      '#386cb0',
+      '#f0027f',
+      '#bf5b17',
+      '#666666',
+    ]).domain().length;
+
+      //* construct legend
+      let legend = this.group
+      .selectAll('.legend')
       .data(pie(data))
       .enter()
       .append('g')
-      .attr(
-        'transform',
-        (d, i) => 'translate(' + (this.CHART_WIDTH - CHART_OBJ.NUMERIC_110) + ',' + (i * CHART_OBJ.NUMERIC_15 + CHART_OBJ.NUMERIC_20) + ')' // place each legend on the right and bump each one down 15 pixels
-      )
-      .attr('class', 'legend');
+      .attr('class', 'legend')
+      .attr('transform', (d, i) => {
+        let height = legendRectSize + legendSpacing;
+        let offset =  height * domaninLength / CHART_OBJ.NUMERIC_2;
+        let horz = CHART_OBJ.NUMERIC_10 * legendRectSize + horizontalScale;
+        let vert = i * height - offset - verticalScale;
+        return `translate(${horz} , ${vert})`;
+      });
 
-    legendG
-      .append('rect') //* make a matching color rect
-      .attr('width', CHART_OBJ.NUMERIC_10)
-      .attr('height', CHART_OBJ.NUMERIC_10)
-      .attr('fill', (d, i) => this.colors(i));
+      //* append rects to legend
+    legend.append('rect')
+      .attr('width', legendRectSize)
+      .attr('height', legendRectSize)
+      .style('fill', (d, i) => this.colors(i))
 
-    legendG
-      .append('text') //* add the text
-      .text((d) => d.data.month)
+      //* append text to legend
+    legend.append('text')
+      .attr('x', legendRectSize + legendSpacing)
+      .attr('y', legendRectSize - legendSpacing)
       .style('font-size', CHART_OBJ.NUMERIC_12)
       .style('font-weight', 'bold')
-      .attr('y', CHART_OBJ.NUMERIC_10)
-      .attr('x', CHART_OBJ.NUMERIC_15);
+      .text((d) => d.data.month);
   }
   /**
    Method to create colors for Pie Chart
