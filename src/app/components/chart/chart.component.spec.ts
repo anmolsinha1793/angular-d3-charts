@@ -183,6 +183,10 @@ describe('BarChartComponent', () => {
     resultSvg.dispatchEvent(new MouseEvent('mouseover'));
     resultSvg.dispatchEvent(new MouseEvent('mouseout'));
     resultSvg.dispatchEvent(new MouseEvent('mousemove'));
+    const circle = document.getElementById('dot');
+    circle.dispatchEvent(new MouseEvent('mouseover'));
+    circle.dispatchEvent(new MouseEvent('mouseout'));
+    expect(circle).toBeDefined();
     expect(resultSvg).toBeDefined();
     expect(component.revenueFlag).toBeTruthy();
   });

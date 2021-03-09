@@ -82,12 +82,25 @@ export class BarChartComponent implements OnInit, OnDestroy {
     lineChart: CHART_OBJ.LINE_CHART_FUNCTION,
     groupedBarChart: CHART_OBJ.GROUPED_BAR_CHART_FUNCTION
   };
+  /**
+   for storing chart overall width
+  */
   CHART_WIDTH =
   CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
+  /**
+   for storing chart overall height
+  */
   CHART_HEIGHT =
   CHART_OBJ.INITIAL_HEIGHT - CHART_OBJ.MARGINS.top - CHART_OBJ.MARGINS.bottom;
+  /**
+   for the resize event observable
+  */
   resizeObservable$: Observable<Event>;
+  /**
+   for storing resize event observable subscription
+  */
   resizeSubscription$: Subscription;
+
   constructor() {}
   /**
    Life-cycle hook for angular, executes on initialization of component
@@ -132,8 +145,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
    @returns void
   */
   onResize(event): void {
-    CHART_OBJ.INITIAL_WIDTH = 0.6 * event.target.innerWidth;
-    CHART_OBJ.INITIAL_HEIGHT = (event.target.innerHeight > event.target.innerWidth) && (event.target.innerHeight - event.target.innerWidth >= 350)? 0.7 * (event.target.innerHeight - event.target.innerWidth): 0.8 * event.target.innerHeight;
+    CHART_OBJ.INITIAL_WIDTH = CHART_OBJ.NUMERIC_06 * event.target.innerWidth;
+    CHART_OBJ.INITIAL_HEIGHT = (event.target.innerHeight > event.target.innerWidth) && (event.target.innerHeight - event.target.innerWidth >= CHART_OBJ.NUMERIC_350)? CHART_OBJ.NUMERIC_07 * (event.target.innerHeight - event.target.innerWidth): CHART_OBJ.NUMERIC_08 * event.target.innerHeight;
     this.CHART_WIDTH =
     CHART_OBJ.INITIAL_WIDTH - CHART_OBJ.MARGINS.left - CHART_OBJ.MARGINS.right;
     this.CHART_HEIGHT =
@@ -146,7 +159,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
    @returns transition
   */
   getTransition(): any {
-    return d3.transition().duration(750);
+    return d3.transition().duration(CHART_OBJ.NUMERIC_750);
   }
   /**
    Method to handle the selected value from dropdown
@@ -168,7 +181,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
         const newData = this.revenueFlag ? this.data : this.data.slice(1);
         this[this.assignmentObj[this.selectedVisualization]](newData);
         this.revenueFlag = !this.revenueFlag;
-      }, 1000);
+      }, CHART_OBJ.SETINTERVAL_VALUE);
     } else {
       this.revenueFlag = true;
       this[this.assignmentObj[this.selectedVisualization]](this.data);
@@ -241,8 +254,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
     if (this.selectedVisualization === CHART_OBJ.PIE_CHART_VALUE) {
       this.dataText = this.group
         .append('text')
-        .attr('y', this.CHART_HEIGHT - 210)
-        .attr('x', this.CHART_WIDTH - 410)
+        .attr('y', this.CHART_HEIGHT - CHART_OBJ.NUMERIC_210)
+        .attr('x', this.CHART_WIDTH - CHART_OBJ.NUMERIC_410)
         .attr('font-size', '10px')
         .attr('opacity', '1')
         .attr('text-anchor', 'middle')
@@ -260,8 +273,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
       this.group
         .append('text')
         .attr('class', 'x axis-label')
-        .attr('x', this.CHART_WIDTH / 2)
-        .attr('y', this.CHART_HEIGHT + 50)
+        .attr('x', this.CHART_WIDTH / CHART_OBJ.NUMERIC_2)
+        .attr('y', this.CHART_HEIGHT + CHART_OBJ.NUMERIC_50)
         .attr('font-size', '20px')
         .attr('text-anchor', 'middle')
         .text('Month');
@@ -270,8 +283,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
       this.yLabel = this.group
         .append('text')
         .attr('class', 'y axis-label')
-        .attr('x', -(this.CHART_HEIGHT / 2))
-        .attr('y', -60)
+        .attr('x', -(this.CHART_HEIGHT / CHART_OBJ.NUMERIC_2))
+        .attr('y', -CHART_OBJ.NUMERIC_60)
         .attr('font-size', '20px')
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(-90)')
@@ -290,13 +303,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
         d.revenue = Number(d.revenue);
         d.profit = +d.profit;
         d.year = parseTime(d.year);
-        d.Under_5_Years = Number(d.Under_5_Years)/100;
-        d._5_to_25_Years = Number(d._5_to_25_Years)/100;
-        d._25_to_45_Years = Number(d._25_to_45_Years)/100;
-        d._45_Years_and_Over = Number(d._45_Years_and_Over)/100;
+        d.Under_5_Years = Number(d.Under_5_Years)/CHART_OBJ.NUMERIC_100;
+        d._5_to_25_Years = Number(d._5_to_25_Years)/CHART_OBJ.NUMERIC_100;
+        d._25_to_45_Years = Number(d._25_to_45_Years)/CHART_OBJ.NUMERIC_100;
+        d._45_Years_and_Over = Number(d._45_Years_and_Over)/CHART_OBJ.NUMERIC_100;
       });
-      this.data['groupKey'] = this.data['columns'][0];
-      this.data['keys'] = this.data['columns'].slice(4);
+      this.data['groupKey'] = this.data['columns'][8];
+      this.data['keys'] = this.data['columns'].slice(4,8);
 
       this[this.assignmentObj[this.selectedVisualization]](this.data);
     });
@@ -317,7 +330,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d[value] + 3000)])
+      .domain([0, d3.max(data, (d) => d[value] + CHART_OBJ.NUMERIC_3000)])
       .range([this.CHART_HEIGHT, 0]);
 
     const xAxisCall = d3.axisBottom(xScale).tickSizeOuter(0);
@@ -372,7 +385,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   updateChartWithGroupedBarChart(data): void {
     let groupKey = data['groupKey'];
     //* get keys for legend
-    let keys = data['columns'].slice(4);
+    let keys = data['columns'].slice(4,8);
 
     //* prepare X and Y scales
     var xScale0 = d3.scaleBand().range([0, this.CHART_WIDTH]).padding(0.2)
@@ -381,7 +394,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     //* prepare X and Y axis calls
     var xAxis = d3.axisBottom(xScale0).tickSizeOuter(0);
-    var yAxis = d3.axisLeft(yScale).ticks(7).tickFormat((d) => `${d}m`).tickSizeOuter(0);
+    var yAxis = d3.axisLeft(yScale).ticks(CHART_OBJ.NUMERIC_7).tickFormat((d) => `${d}m`).tickSizeOuter(0);
 
     //* customize X and Y scale domains
     xScale0.domain(data.map(d => d[groupKey]))
@@ -424,27 +437,27 @@ export class BarChartComponent implements OnInit, OnDestroy {
     const legend = this.chartContainer
       .attr("text-anchor", "end")
       .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
+      .attr("font-size", CHART_OBJ.NUMERIC_10)
       .selectAll('.legend')
       .data(keys.slice())
       .enter()
       .append('g')
       .attr(
         'transform',
-        (d, i) => `translate(${(this.CHART_WIDTH + 90)}, ${(i * 20)})` // place each legend on the right and bump each one down 15 pixels
+        (d, i) => `translate(${(this.CHART_WIDTH + CHART_OBJ.NUMERIC_90)}, ${(i * CHART_OBJ.NUMERIC_20)})` // place each legend on the right and bump each one down 15 pixels
       )
       .attr('class', 'legend');
 
       //* append rects for color in legend
       legend.append("rect")
-      .attr("x", -19)
-      .attr("width", 19)
-      .attr("height", 19)
+      .attr("x", -CHART_OBJ.NUMERIC_19)
+      .attr("width", CHART_OBJ.NUMERIC_19)
+      .attr("height", CHART_OBJ.NUMERIC_19)
       .attr("fill", color);
 
       //* Append text to legend
       legend.append("text")
-      .attr("x", -24)
+      .attr("x", -CHART_OBJ.NUMERIC_24)
       .attr("y", 9.5)
       .attr("dy", "0.35em")
       .text(d => d.split("_").join(" "));
@@ -477,7 +490,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d[value] + 3000)])
+      .domain([0, d3.max(data, (d) => d[value] + CHART_OBJ.NUMERIC_3000)])
       .range([this.CHART_HEIGHT, 0]);
 
     const xAxisCall = d3.axisBottom(xScale).tickSizeOuter(0);
@@ -485,7 +498,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     const yAxisCall = d3
       .axisLeft(yScale)
-      .ticks(6)
+      .ticks(CHART_OBJ.NUMERIC_6)
       .tickSizeOuter(0)
       .tickFormat((d) => `${d}m`);
     this.yAxisGroup.transition(this.getTransition()).call(yAxisCall);
@@ -514,7 +527,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .merge(rects)
       .transition(this.getTransition())
       .attr('cy', (data) => yScale(data[value]))
-      .attr('cx', (data) => xScale(data.month) + xScale.bandwidth() / 2);
+      .attr('cx', (data) => xScale(data.month) + xScale.bandwidth() / CHART_OBJ.NUMERIC_2);
 
     const label = this.revenueFlag ? CHART_OBJ.REVENUE : CHART_OBJ.PROFIT;
     this.yLabel.text(label);
@@ -529,6 +542,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
     //* for tooltip
     const bisectDate = d3.bisector((d) => d.year).left;
     this.group.selectAll('path').remove();
+    this.group.selectAll('#dot').remove();
     //* scales
     const xScale = d3
       .scaleTime()
@@ -537,14 +551,14 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d[value] + 3000)])
+      .domain([0, d3.max(data, (d) => d[value] + CHART_OBJ.NUMERIC_3000)])
       .range([this.CHART_HEIGHT, 0]);
 
     //* axis generators
     const xAxisCall = d3.axisBottom().tickSizeOuter(0);
     const yAxisCall = d3
       .axisLeft()
-      .ticks(6)
+      .ticks(CHART_OBJ.NUMERIC_6)
       .tickSizeOuter(0)
       .tickFormat((d) => `${d}m`);
 
@@ -568,18 +582,17 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('d', line(data));
 
     //* optionally add circular dots to the line-chart, comment if not needed
-    this.group.selectAll(".dot")
+    this.group.selectAll("#dot")
       .data(data)
     .enter().append("circle") // Uses the enter().append() method
-      .attr("class", "dot") // Assign a class for styling
-      .attr("cx", function(d, i) { return xScale(d.year) })
-      .attr("cy", function(d) { return yScale(d[value]) })
+      .attr("id", "dot") // Assign a class for styling
+      .attr("cx", (d, i) => xScale(d.year))
+      .attr("cy", (d) => yScale(d[value]))
       .attr("r", 5)
-        .on("mouseover", function(a, b, c) {
-          console.log(a)
-          this.attr('class', 'focus')
+        .on("mouseover", (a, b, c) => {
+          // this.attr('class', 'focus')
       })
-        .on("mouseout", function() {  })
+        .on("mouseout", () => {  })
 
     /******************************** Tooltip Code ********************************/
 
@@ -605,16 +618,16 @@ export class BarChartComponent implements OnInit, OnDestroy {
     focus
       .append('rect')
       .attr('class', 'tooltip')
-      .attr('width', 125)
-      .attr('height', 50)
-      .attr('x', 10)
-      .attr('y', -22)
-      .attr('rx', 4)
-      .attr('ry', 4);
+      .attr('width', CHART_OBJ.NUMERIC_125)
+      .attr('height', CHART_OBJ.NUMERIC_50)
+      .attr('x', CHART_OBJ.NUMERIC_10)
+      .attr('y', -CHART_OBJ.NUMERIC_22)
+      .attr('rx', CHART_OBJ.NUMERIC_4)
+      .attr('ry', CHART_OBJ.NUMERIC_4);
 
     focus
       .append('text')
-      .attr('x', 15)
+      .attr('x', CHART_OBJ.NUMERIC_15)
       .attr('class', 'line__chart__text')
       .attr('dy', '.31em');
 
@@ -622,8 +635,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('rect')
       .attr('class', 'overlay')
       .attr('id', 'tooltip__linechart')
-      .attr('width', this.CHART_WIDTH + 110)
-      .attr('height', this.CHART_HEIGHT + 110)
+      .attr('width', this.CHART_WIDTH + CHART_OBJ.NUMERIC_110)
+      .attr('height', this.CHART_HEIGHT + CHART_OBJ.NUMERIC_110)
       .on('mouseover', () => focus.style('display', null))
       .on('mouseout', () => focus.style('display', 'none'))
       .on('mousemove', (e) =>
@@ -673,9 +686,9 @@ export class BarChartComponent implements OnInit, OnDestroy {
     d3.selectAll('.legend').remove();
     this.group.attr(
       'transform',
-      `translate(${this.CHART_WIDTH / 2},${this.CHART_HEIGHT / 2})`
+      `translate(${this.CHART_WIDTH / CHART_OBJ.NUMERIC_2},${this.CHART_HEIGHT / CHART_OBJ.NUMERIC_2})`
     );
-    const radius = Math.min(this.CHART_WIDTH, this.CHART_HEIGHT) / 2 - 10;
+    const radius = Math.min(this.CHART_WIDTH, this.CHART_HEIGHT) / CHART_OBJ.NUMERIC_2 - CHART_OBJ.NUMERIC_10;
     //* Compute the position of each group on the pie:
     const pie = d3.pie<any>().value((d: any) => Number(d[value]));
 
@@ -702,8 +715,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
     //* Add labels
     const labelLocation = d3
       .arc()
-      .innerRadius(100)
-      .outerRadius(radius - 50);
+      .innerRadius(CHART_OBJ.NUMERIC_100)
+      .outerRadius(radius - CHART_OBJ.NUMERIC_50);
 
     this.group
       .selectAll('pieces')
@@ -714,7 +727,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('transform', (d) => `translate(${labelLocation.centroid(d)})`)
       .attr('dy', '.35em')
       .style('text-anchor', 'middle')
-      .style('font-size', 13);
+      .style('font-size', CHART_OBJ.NUMERIC_13);
 
     this.dataText.text(`Data Displayed: ${value} in $`);
     //* function call to add legend to chart
@@ -735,23 +748,23 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('g')
       .attr(
         'transform',
-        (d, i) => 'translate(' + (this.CHART_WIDTH - 110) + ',' + (i * 15 + 20) + ')' // place each legend on the right and bump each one down 15 pixels
+        (d, i) => 'translate(' + (this.CHART_WIDTH - CHART_OBJ.NUMERIC_110) + ',' + (i * CHART_OBJ.NUMERIC_15 + CHART_OBJ.NUMERIC_20) + ')' // place each legend on the right and bump each one down 15 pixels
       )
       .attr('class', 'legend');
 
     legendG
       .append('rect') //* make a matching color rect
-      .attr('width', 10)
-      .attr('height', 10)
+      .attr('width', CHART_OBJ.NUMERIC_10)
+      .attr('height', CHART_OBJ.NUMERIC_10)
       .attr('fill', (d, i) => this.colors(i));
 
     legendG
       .append('text') //* add the text
       .text((d) => d.data.month)
-      .style('font-size', 12)
+      .style('font-size', CHART_OBJ.NUMERIC_12)
       .style('font-weight', 'bold')
-      .attr('y', 10)
-      .attr('x', 15);
+      .attr('y', CHART_OBJ.NUMERIC_10)
+      .attr('x', CHART_OBJ.NUMERIC_15);
   }
   /**
    Method to create colors for Pie Chart
