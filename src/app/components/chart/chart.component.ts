@@ -442,7 +442,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .append('g')
       .attr(
         'transform',
-        (d, i) => `translate(${(this.CHART_WIDTH + CHART_OBJ.NUMERIC_90)}, ${(i * CHART_OBJ.NUMERIC_20)})` // place each legend on the right and bump each one down 15 pixels
+        (d, i) => `translate(${(this.CHART_WIDTH + CHART_OBJ.NUMERIC_90)}, ${(i * CHART_OBJ.NUMERIC_20)})` //* place each legend on the right and bump each one down 15 pixels
       )
       .attr('class', 'legend');
 
@@ -587,10 +587,6 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr("cx", (d, i) => xScale(d.year))
       .attr("cy", (d) => yScale(d[value]))
       .attr("r", 5)
-        .on("mouseover", (a, b, c) => {
-          // this.attr('class', 'focus')
-      })
-        .on("mouseout", () => {  })
 
     /******************************** Tooltip Code ********************************/
 
