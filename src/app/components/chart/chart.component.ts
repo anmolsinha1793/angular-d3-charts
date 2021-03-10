@@ -430,7 +430,6 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr("fill", d => color(d.key))
       .merge(rects)
       .transition(this.getTransition())
-      .attr("x", d => xScale1(d.key))
       .attr("y", d => yScale(d.value))
       .attr("height", d => yScale(0) - yScale(d.value));
 
