@@ -387,7 +387,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     //* prepare X and Y scales
     var xScale0 = d3.scaleBand().range([0, this.CHART_WIDTH]).padding(0.2)
-    var xScale1 = d3.scaleBand()
+    var xScale1 = d3.scaleBand().padding(0.05)
     var yScale = d3.scaleLinear().range([this.CHART_HEIGHT, 0])
 
     //* prepare X and Y axis calls
@@ -400,22 +400,21 @@ export class BarChartComponent implements OnInit, OnDestroy {
     yScale.domain([0, d3.max(data, d => d3.max(keys, key => d[key]))]).nice()
 
     //* X and Y axis calls
-    this.xAxisGroup.call(xAxis);
-    this.yAxisGroup.call(yAxis);
+    this.xAxisGroup.transition(this.getTransition()).call(xAxis);
+    this.yAxisGroup.transition(this.getTransition()).call(yAxis);
 
     //* Prepare color for chart
     let color = d3.scaleOrdinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-    const rects = this.group.selectAll("g")
-    .data(data);
-
-    //* append data to group and prepare bars for chart
-    this.group.append("g")
+    const rects =  this.group.append("g")
     .selectAll("g")
     .data(data, (d) => {
       return d?.month;
-    })
+    });
+
+    //* append data to group and prepare bars for chart
+    rects
     .join("g")
       .attr("transform", d => `translate(${xScale0(d[groupKey])},0)`)
     .selectAll("rect")
@@ -423,12 +422,17 @@ export class BarChartComponent implements OnInit, OnDestroy {
     .join("rect")
       .attr('id','grouped__bar__chart')
       .attr("x", d => xScale1(d.key))
-      .attr("y", d => yScale(d.value))
+      .attr('y', yScale(0))
+      .attr('height', 0)
       .attr("width", xScale1.bandwidth())
-      .attr("height", d => yScale(0) - yScale(d.value))
       .on('mouseover', this.tip.show)
       .on('mouseout', this.tip.hide)
-      .attr("fill", d => color(d.key));
+      .attr("fill", d => color(d.key))
+      .merge(rects)
+      .transition(this.getTransition())
+      .attr("x", d => xScale1(d.key))
+      .attr("y", d => yScale(d.value))
+      .attr("height", d => yScale(0) - yScale(d.value));
 
 
     //* prepare legend
